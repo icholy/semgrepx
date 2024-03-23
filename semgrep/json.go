@@ -1,7 +1,6 @@
 package semgrep
 
 import (
-	"bytes"
 	"encoding/json"
 	"os"
 	"slices"
@@ -59,4 +58,19 @@ func ReadFile(name string) (*Output, error) {
 // Replace the the buf contents between start and end with data
 func Replace(buf []byte, start, end Pos, data []byte) []byte {
 	return slices.Replace(buf, start.Offset, end.Offset, data...)
+}
+
+type RewriteFn = func(r Result) (string, error)
+
+func Rewrite(dir string, results []Result, rewrite RewriteFn) error {
+	files := map[string][]Result{}
+	for _, r := range results {
+		files[r.Path] = append(files[r.Path], r)
+	}
+	for _, rr := range files {
+		slices.SortFunc(rr, func(a, b Result) int {
+			return a.Start.Offset - b.Start.Offset
+		})
+	}
+	return nil
 }
