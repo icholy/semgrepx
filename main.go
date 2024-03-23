@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"log"
 	"os/exec"
 	"strings"
@@ -23,6 +24,7 @@ func main() {
 		log.Fatalf("failed to read semgrep json: %v", err)
 	}
 	err = RewriteAll(dir, output.Results, func(r Result) ([]byte, error) {
+		fmt.Printf("file: %s:%d\n--- before ---\n%s\n", r.Path, r.Start.Line, r.Extra.Lines)
 		var output bytes.Buffer
 		cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
 		cmd.Stdin = strings.NewReader(strings.TrimSpace(r.Extra.Lines))
@@ -30,6 +32,7 @@ func main() {
 		if err := cmd.Run(); err != nil {
 			return nil, err
 		}
+		fmt.Printf("--- after ---\n%s\n---\n\n", output.String())
 		return output.Bytes(), nil
 	})
 	if err != nil {
