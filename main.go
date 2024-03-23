@@ -1,7 +1,8 @@
-package semgrep
+package main
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"slices"
@@ -58,26 +59,39 @@ func ReadFile(name string) (*Output, error) {
 
 type RewriteFn = func(r Result) ([]byte, error)
 
-func Rewrite(dir string, results []Result, rewrite RewriteFn) error {
+var ErrSkip = errors.New("skip")
+
+func Rewrite(data []byte, results []Result, rewrite RewriteFn) ([]byte, error) {
+	slices.SortFunc(results, func(a, b Result) int {
+		return a.Start.Offset - b.Start.Offset
+	})
+	for _, r := range results {
+		rewritten, err := rewrite(r)
+		if err == ErrSkip {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		data = slices.Replace(data, r.Start.Offset, r.End.Offset, rewritten...)
+	}
+	return data, nil
+}
+
+func RewriteAll(dir string, results []Result, rewrite RewriteFn) error {
 	files := map[string][]Result{}
 	for _, r := range results {
 		files[r.Path] = append(files[r.Path], r)
 	}
 	for file, rr := range files {
-		slices.SortFunc(rr, func(a, b Result) int {
-			return a.Start.Offset - b.Start.Offset
-		})
 		path := filepath.Join(dir, file)
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
-		for _, r := range rr {
-			rewritten, err := rewrite(r)
-			if err != nil {
-				return err
-			}
-			data = slices.Replace(data, r.Start.Offset, r.End.Offset, rewritten...)
+		data, err = Rewrite(data, rr, rewrite)
+		if err != nil {
+			return err
 		}
 		if err := os.WriteFile(path, data, os.ModePerm); err != nil {
 			return err
