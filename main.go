@@ -25,7 +25,7 @@ func main() {
 	err = RewriteAll(dir, output.Results, func(r Result) ([]byte, error) {
 		var output bytes.Buffer
 		cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
-		cmd.Stdin = strings.NewReader(r.Extra.Lines)
+		cmd.Stdin = strings.NewReader(strings.TrimSpace(r.Extra.Lines))
 		cmd.Stdout = &output
 		if err := cmd.Run(); err != nil {
 			return nil, err
