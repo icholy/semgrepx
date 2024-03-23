@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"slices"
 )
 
 type Pos struct {
@@ -42,6 +43,7 @@ type Output struct {
 	Version string   `json:"version"`
 }
 
+// ReadFile reads and parses a file containing semgrep json
 func ReadFile(name string) (*Output, error) {
 	data, err := os.ReadFile(name)
 	if err != nil {
@@ -52,4 +54,9 @@ func ReadFile(name string) (*Output, error) {
 		return nil, err
 	}
 	return &output, nil
+}
+
+// Replace the the buf contents between start and end with data
+func Replace(buf []byte, start, end Pos, data []byte) []byte {
+	return slices.Replace(buf, start.Offset, end.Offset, data...)
 }
