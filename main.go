@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -29,6 +30,7 @@ func main() {
 		cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
 		cmd.Stdin = strings.NewReader(strings.TrimSpace(r.Extra.Lines))
 		cmd.Stdout = &output
+		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
 			return nil, err
 		}
