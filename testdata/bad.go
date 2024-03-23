@@ -10,4 +10,6 @@ func Good() {
 
 func main() {
 	Bad()
+	Good()
+	Bad()
 }

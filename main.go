@@ -63,7 +63,7 @@ var ErrSkip = errors.New("skip")
 
 func Rewrite(data []byte, results []Result, rewrite RewriteFn) ([]byte, error) {
 	slices.SortFunc(results, func(a, b Result) int {
-		return a.Start.Offset - b.Start.Offset
+		return b.Start.Offset - a.Start.Offset
 	})
 	for _, r := range results {
 		rewritten, err := rewrite(r)
