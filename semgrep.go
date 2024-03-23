@@ -57,7 +57,7 @@ func ReadFile(name string) (*Output, error) {
 	return &output, nil
 }
 
-type RewriteFn = func(r Result) ([]byte, error)
+type RewriteFn = func(data []byte, r Result) ([]byte, error)
 
 var ErrSkip = errors.New("skip")
 
@@ -66,7 +66,7 @@ func Rewrite(data []byte, results []Result, rewrite RewriteFn) ([]byte, error) {
 		return b.Start.Offset - a.Start.Offset
 	})
 	for _, r := range results {
-		rewritten, err := rewrite(r)
+		rewritten, err := rewrite(data[r.Start.Offset:r.End.Offset], r)
 		if err == ErrSkip {
 			continue
 		}
