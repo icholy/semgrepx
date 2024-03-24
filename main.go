@@ -35,7 +35,7 @@ func main() {
 		match := data[r.Start.Offset:r.End.Offset]
 		fmt.Printf("--- before: %s\n%s\n",
 			r.Path,
-			FormatLines(string(match), r.Start.Line, 5),
+			FormatLines(match, r.Start.Line, 5),
 		)
 		var stdout bytes.Buffer
 		cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
@@ -51,7 +51,7 @@ func main() {
 		}
 		fmt.Printf("--- after: %s\n%s\n",
 			r.Path,
-			FormatLines(string(rewritten), r.Start.Line, 5),
+			FormatLines(rewritten, r.Start.Line, 5),
 		)
 		return r, rewritten, nil
 	})
@@ -82,15 +82,15 @@ func ExtendLines(r Result, data []byte) Result {
 	return r
 }
 
-func FormatLines(code string, lineno, indent int) string {
+func FormatLines(data []byte, lineno, indent int) string {
 	var b strings.Builder
-	scanner := bufio.NewScanner(strings.NewReader(code))
+	scanner := bufio.NewScanner(bytes.NewReader(data))
 	for scanner.Scan() {
 		num := strconv.Itoa(lineno)
 		b.WriteString(strings.Repeat(" ", indent-len(num)))
 		b.WriteString(num)
 		b.WriteString("| ")
-		b.WriteString(scanner.Text())
+		b.Write(scanner.Bytes())
 		b.WriteByte('\n')
 		lineno++
 	}
