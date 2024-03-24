@@ -28,17 +28,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to read semgrep json: %v", err)
 	}
-	err = RewriteAll(dir, output.Results, func(data []byte, r Result) ([]byte, error) {
+	err = RewriteAll(dir, output.Results, func(r Result, data []byte) ([]byte, error) {
 		if lines {
 			r = ExtendLines(r, data)
 		}
+		match := data[r.Start.Offset:r.End.Offset]
 		fmt.Printf("--- before: %s\n%s\n",
 			r.Path,
-			FormatLines(string(data), r.Start.Line, 5),
+			FormatLines(string(match), r.Start.Line, 5),
 		)
 		var stdout bytes.Buffer
 		cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
-		cmd.Stdin = bytes.NewReader(data)
+		cmd.Stdin = bytes.NewReader(match)
 		cmd.Stdout = &stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
