@@ -5,5 +5,5 @@
 Example:
 
 ``` sh
-cat semgrep.json | semgrepx llm 'replace x with y'
+semgrep -l go --pattern 'log.$A(...)' --json | semgrepx llm 'update this go to use log.Printf'
 ```
