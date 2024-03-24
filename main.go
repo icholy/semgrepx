@@ -45,15 +45,15 @@ func main() {
 		if err := cmd.Run(); err != nil {
 			return r, nil, err
 		}
-		output := stdout.Bytes()
+		rewritten := stdout.Bytes()
 		if trim {
-			output = bytes.TrimSpace(output)
+			rewritten = bytes.TrimSpace(rewritten)
 		}
 		fmt.Printf("--- after: %s\n%s\n",
 			r.Path,
-			FormatLines(string(output), r.Start.Line, 5),
+			FormatLines(string(rewritten), r.Start.Line, 5),
 		)
-		return r, output, nil
+		return r, rewritten, nil
 	})
 	if err != nil {
 		log.Fatalf("failed to rewrite: %v", err)
