@@ -17,7 +17,7 @@ func main() {
 	var dir string
 	var trim, lines bool
 	flag.StringVar(&dir, "dir", ".", "directory to run in")
-	flag.BoolVar(&trim, "tri,", false, "trim whitespace")
+	flag.BoolVar(&trim, "trim", false, "trim whitespace")
 	flag.BoolVar(&lines, "lines", false, "expand matches to full lines")
 	flag.Parse()
 	if flag.NArg() == 0 {
