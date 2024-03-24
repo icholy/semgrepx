@@ -62,14 +62,21 @@ func main() {
 // ExtendLines returns r with the Start and End extended to include
 // the full ine content
 func ExtendLines(r Result, data []byte) Result {
-	isNewline := func(b byte) bool { return b == '\n' || b == '\r' }
-	for r.Start.Offset > 0 && !isNewline(data[r.Start.Offset]) {
-		r.Start.Offset--
-		r.Start.Col--
+	if len(data) == 0 {
+		return r
 	}
-	for r.End.Offset < len(data) && !isNewline(data[r.End.Offset]) {
-		r.End.Offset++
-		r.End.Col++
+	isNL := func(b byte) bool { return b == '\n' || b == '\r' }
+	if !isNL(data[r.Start.Offset]) {
+		for r.Start.Offset > 0 && !isNL(data[r.Start.Offset-1]) {
+			r.Start.Offset--
+			r.Start.Col--
+		}
+	}
+	if !isNL(data[r.End.Offset]) {
+		for r.End.Offset < len(data) && !isNL(data[r.End.Offset]) {
+			r.End.Offset++
+			r.End.Col++
+		}
 	}
 	return r
 }
