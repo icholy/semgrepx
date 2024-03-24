@@ -60,7 +60,7 @@ func main() {
 }
 
 // ExtendLines returns r with the Start and End extended to include
-// the full ine content
+// the full line content
 func ExtendLines(r Result, data []byte) Result {
 	if len(data) == 0 {
 		return r
