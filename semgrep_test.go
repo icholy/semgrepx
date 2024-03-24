@@ -45,14 +45,14 @@ func TestExtendLines(t *testing.T) {
 			want: []byte(""),
 			result: Result{
 				Start: Pos{
-					Offset: 0,
 					Line:   1,
 					Col:    0,
+					Offset: 0,
 				},
 				End: Pos{
-					Offset: 0,
 					Line:   1,
 					Col:    0,
+					Offset: 0,
 				},
 			},
 		},
@@ -61,14 +61,30 @@ func TestExtendLines(t *testing.T) {
 			want: []byte(" a "),
 			result: Result{
 				Start: Pos{
-					Offset: 1,
 					Line:   1,
+					Offset: 1,
 					Col:    1,
 				},
 				End: Pos{
-					Offset: 1,
 					Line:   1,
 					Col:    1,
+					Offset: 1,
+				},
+			},
+		},
+		{
+			data: []byte("foo();\nbar();\nbaz++"),
+			want: []byte("bar();"),
+			result: Result{
+				Start: Pos{
+					Line:   2,
+					Col:    9,
+					Offset: 9,
+				},
+				End: Pos{
+					Line:   1,
+					Col:    9,
+					Offset: 9,
 				},
 			},
 		},
