@@ -56,6 +56,22 @@ func TestExtendLines(t *testing.T) {
 				},
 			},
 		},
+		{
+			data: []byte(" a "),
+			want: []byte(" a "),
+			result: Result{
+				Start: Pos{
+					Offset: 1,
+					Line:   1,
+					Col:    1,
+				},
+				End: Pos{
+					Offset: 1,
+					Line:   1,
+					Col:    1,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
