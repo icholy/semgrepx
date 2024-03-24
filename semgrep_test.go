@@ -34,3 +34,49 @@ func TestRewrite(t *testing.T) {
 		t.Fatalf("rewritten file does not match good file")
 	}
 }
+
+func TestExtendLines(t *testing.T) {
+	tests := []struct {
+		data         []byte
+		result, want Result
+	}{
+		{
+			data: []byte(""),
+			result: Result{
+				Start: Pos{
+					Line:   1,
+					Col:    0,
+					Offset: 0,
+				},
+				End: Pos{
+					Line:   1,
+					Col:    0,
+					Offset: 0,
+				},
+			},
+			want: Result{
+				Start: Pos{
+					Line:   1,
+					Col:    0,
+					Offset: 0,
+				},
+				End: Pos{
+					Line:   1,
+					Col:    0,
+					Offset: 0,
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			got := ExtendLines(tt.result, tt.data)
+			if got.Start != tt.want.Start {
+				t.Fatalf("bad start position: want %v, got %v", tt.want.Start, got.Start)
+			}
+			if got.End != tt.want.End {
+				t.Fatalf("bad end position: want %v, got %v", tt.want.End, got.End)
+			}
+		})
+	}
+}

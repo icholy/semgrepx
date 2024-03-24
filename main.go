@@ -15,9 +15,10 @@ import (
 func main() {
 	// parse flags
 	var dir string
-	var trim bool
-	flag.StringVar(&dir, "d", ".", "directory to run in")
-	flag.BoolVar(&trim, "t", false, "trim whitespace")
+	var trim, lines bool
+	flag.StringVar(&dir, "dir", ".", "directory to run in")
+	flag.BoolVar(&trim, "tri,", false, "trim whitespace")
+	flag.BoolVar(&lines, "lines", false, "expand matches to full lines")
 	flag.Parse()
 	if flag.NArg() == 0 {
 		log.Fatalf("expecting a command to run")
@@ -28,6 +29,9 @@ func main() {
 		log.Fatalf("failed to read semgrep json: %v", err)
 	}
 	err = RewriteAll(dir, output.Results, func(data []byte, r Result) ([]byte, error) {
+		if lines {
+			r = ExtendLines(r, data)
+		}
 		fmt.Printf("--- before: %s\n%s\n",
 			r.Path,
 			FormatLines(string(data), r.Start.Line, 5),
@@ -53,6 +57,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to rewrite: %v", err)
 	}
+}
+
+// ExtendLines returns r with the Start and End extended to include
+// the full ine content
+func ExtendLines(r Result, data []byte) Result {
+	isNewline := func(b byte) bool { return b == '\n' || b == '\r' }
+	for r.Start.Offset > 0 && !isNewline(data[r.Start.Offset]) {
+		r.Start.Offset--
+		r.Start.Col--
+	}
+	for r.End.Offset < len(data) && !isNewline(data[r.End.Offset]) {
+		r.End.Offset++
+		r.End.Col++
+	}
+	return r
 }
 
 func FormatLines(code string, lineno, indent int) string {
