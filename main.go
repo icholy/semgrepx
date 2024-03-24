@@ -14,17 +14,16 @@ import (
 
 func main() {
 	// parse flags
-	var file, dir string
+	var dir string
 	var trim bool
-	flag.StringVar(&file, "f", "semgrep.json", "semgrep json file")
 	flag.StringVar(&dir, "d", ".", "directory to run in")
 	flag.BoolVar(&trim, "t", false, "trim whitespace")
 	flag.Parse()
 	if flag.NArg() == 0 {
 		log.Fatalf("expecting a command to run")
 	}
-	// read semgrep file
-	output, err := ReadFile(file)
+	// read semgrep json
+	output, err := ReadOutput(os.Stdin)
 	if err != nil {
 		log.Fatalf("failed to read semgrep json: %v", err)
 	}

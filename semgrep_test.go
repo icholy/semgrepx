@@ -16,7 +16,7 @@ func TestRewrite(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to read bad file: %v", err)
 	}
-	output, err := ReadFile(filepath.FromSlash("./testdata/semgrep.json"))
+	output, err := ReadOutputFile(filepath.FromSlash("./testdata/semgrep.json"))
 	if err != nil {
 		t.Fatalf("failed to read semgrep json: %v", err)
 	}

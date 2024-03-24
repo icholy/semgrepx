@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"slices"
@@ -44,17 +45,22 @@ type Output struct {
 	Version string   `json:"version"`
 }
 
-// ReadFile reads and parses a file containing semgrep json
-func ReadFile(name string) (*Output, error) {
-	data, err := os.ReadFile(name)
-	if err != nil {
-		return nil, err
-	}
+func ReadOutput(r io.Reader) (*Output, error) {
 	var output Output
-	if err := json.Unmarshal(data, &output); err != nil {
+	dec := json.NewDecoder(r)
+	if err := dec.Decode(&output); err != nil {
 		return nil, err
 	}
 	return &output, nil
+}
+
+func ReadOutputFile(filename string) (*Output, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	return ReadOutput(f)
 }
 
 type RewriteFn = func(data []byte, r Result) ([]byte, error)
