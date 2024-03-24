@@ -37,45 +37,32 @@ func TestRewrite(t *testing.T) {
 
 func TestExtendLines(t *testing.T) {
 	tests := []struct {
-		data         []byte
-		result, want Result
+		result     Result
+		data, want []byte
 	}{
 		{
 			data: []byte(""),
+			want: []byte(""),
 			result: Result{
 				Start: Pos{
+					Offset: 0,
 					Line:   1,
 					Col:    0,
-					Offset: 0,
 				},
 				End: Pos{
+					Offset: 0,
 					Line:   1,
 					Col:    0,
-					Offset: 0,
-				},
-			},
-			want: Result{
-				Start: Pos{
-					Line:   1,
-					Col:    0,
-					Offset: 0,
-				},
-				End: Pos{
-					Line:   1,
-					Col:    0,
-					Offset: 0,
 				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
-			got := ExtendLines(tt.result, tt.data)
-			if got.Start != tt.want.Start {
-				t.Fatalf("bad start position: want %v, got %v", tt.want.Start, got.Start)
-			}
-			if got.End != tt.want.End {
-				t.Fatalf("bad end position: want %v, got %v", tt.want.End, got.End)
+			r := ExtendLines(tt.result, tt.data)
+			got := tt.data[r.Start.Offset:r.End.Offset]
+			if !bytes.Equal(got, tt.want) {
+				t.Errorf("got %q, want %q", got, tt.want)
 			}
 		})
 	}
