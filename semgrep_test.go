@@ -23,8 +23,8 @@ func TestRewrite(t *testing.T) {
 	rewritten, err := Rewrite(
 		bad,
 		output.Results,
-		func(r Result, data []byte) ([]byte, error) {
-			return []byte("Good()"), nil
+		func(r Result, data []byte) (Result, []byte, error) {
+			return r, []byte("Good()"), nil
 		},
 	)
 	if err != nil {

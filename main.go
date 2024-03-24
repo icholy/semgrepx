@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to read semgrep json: %v", err)
 	}
-	err = RewriteAll(dir, output.Results, func(r Result, data []byte) ([]byte, error) {
+	err = RewriteAll(dir, output.Results, func(r Result, data []byte) (Result, []byte, error) {
 		if lines {
 			r = ExtendLines(r, data)
 		}
@@ -43,7 +43,7 @@ func main() {
 		cmd.Stdout = &stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
-			return nil, err
+			return r, nil, err
 		}
 		output := stdout.Bytes()
 		if trim {
@@ -53,7 +53,7 @@ func main() {
 			r.Path,
 			FormatLines(string(output), r.Start.Line, 5),
 		)
-		return output, nil
+		return r, output, nil
 	})
 	if err != nil {
 		log.Fatalf("failed to rewrite: %v", err)
