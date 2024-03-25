@@ -16,6 +16,7 @@ func main() {
 	// parse flags
 	var dir string
 	var trim, lines bool
+	var retry int
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: semgrepx [flags] <command> [args...]")
 		fmt.Println("flags:")
@@ -24,6 +25,7 @@ func main() {
 	flag.StringVar(&dir, "dir", ".", "directory to run in")
 	flag.BoolVar(&trim, "trim", false, "trim whitespace")
 	flag.BoolVar(&lines, "lines", false, "expand matches to full lines")
+	flag.IntVar(&retry, "retry", 0, "number of retries (< 0 is unlimited)")
 	flag.Parse()
 	if flag.NArg() == 0 {
 		flag.Usage()
@@ -44,11 +46,20 @@ func main() {
 			FormatLines(match, r.Start.Line, 5),
 		)
 		var stdout bytes.Buffer
-		cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
-		cmd.Stdin = bytes.NewReader(match)
-		cmd.Stdout = &stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
+		for retries := 0; true; retries++ {
+			stdout.Reset()
+			cmd := exec.Command(flag.Arg(0), flag.Args()[1:]...)
+			cmd.Stdin = bytes.NewReader(match)
+			cmd.Stdout = &stdout
+			cmd.Stderr = os.Stderr
+			err := cmd.Run()
+			if err == nil {
+				break
+			}
+			if retry < 0 || retries > retry {
+				log.Printf("retrying: %v\n", err)
+				continue
+			}
 			return r, nil, err
 		}
 		rewritten := stdout.Bytes()

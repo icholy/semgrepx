@@ -11,6 +11,8 @@ flags:
     	directory to run in (default ".")
   -lines
     	expand matches to full lines
+  -retry int
+    	number of retries (< 0 is unlimited)
   -trim
     	trim whitespace
 ```
