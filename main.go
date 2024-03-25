@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// parse flags
-	var dir string
+	var dir, file string
 	var trim, lines bool
 	var retry int
 	flag.Usage = func() {
@@ -22,6 +22,7 @@ func main() {
 		fmt.Println("flags:")
 		flag.PrintDefaults()
 	}
+	flag.StringVar(&file, "file", "", "semgrep json file")
 	flag.StringVar(&dir, "dir", ".", "directory to run in")
 	flag.BoolVar(&trim, "trim", false, "trim whitespace")
 	flag.BoolVar(&lines, "lines", false, "expand matches to full lines")
@@ -32,11 +33,21 @@ func main() {
 		os.Exit(1)
 	}
 	// read semgrep json
-	output, err := ReadOutput(os.Stdin)
-	if err != nil {
-		log.Fatalf("failed to read semgrep json: %v", err)
+	var output *Output
+	if file != "" {
+		var err error
+		output, err = ReadOutputFile(file)
+		if err != nil {
+			log.Fatalf("failed to open semgrep json file: %v", err)
+		}
+	} else {
+		var err error
+		output, err = ReadOutput(os.Stdout)
+		if err != nil {
+			log.Fatalf("failed to read semgrep json: %v", err)
+		}
 	}
-	err = RewriteAll(dir, output.Results, func(r Result, data []byte) (Result, []byte, error) {
+	err := RewriteAll(dir, output.Results, func(r Result, data []byte) (Result, []byte, error) {
 		if lines {
 			r = ExtendLines(r, data)
 		}

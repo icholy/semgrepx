@@ -9,6 +9,8 @@ Usage: semgrepx [flags] <command> [args...]
 flags:
   -dir string
     	directory to run in (default ".")
+  -file string
+    	semgrep json file
   -lines
     	expand matches to full lines
   -retry int
