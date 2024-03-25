@@ -16,12 +16,18 @@ func main() {
 	// parse flags
 	var dir string
 	var trim, lines bool
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "Usage: semgrepx [flags] <command> [args...]")
+		fmt.Println("flags:")
+		flag.PrintDefaults()
+	}
 	flag.StringVar(&dir, "dir", ".", "directory to run in")
 	flag.BoolVar(&trim, "trim", false, "trim whitespace")
 	flag.BoolVar(&lines, "lines", false, "expand matches to full lines")
 	flag.Parse()
 	if flag.NArg() == 0 {
-		log.Fatalf("expecting a command to run")
+		flag.Usage()
+		os.Exit(1)
 	}
 	// read semgrep json
 	output, err := ReadOutput(os.Stdin)
