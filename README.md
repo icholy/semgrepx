@@ -2,9 +2,21 @@
 
 > A tool for rewriting semgrep matches using externals tools
 
+### Installation:
+
+If you have a Go toolchain installed, you can build the `semgrepx` binary like this:
+
+```sh
+git clone https://github.com/icholy/semgrepx
+cd semgrepx
+go build
+```
+You can then run the binary as `./semgrepx`
+
+
 ### CLI:
 
-``` text
+```
 Usage: semgrepx [flags] <command> [args...]
 flags:
   -dir string
@@ -27,7 +39,7 @@ The matched code is replaced by the command's stdout.
 
 ### Example:
 
-``` sh
+```sh
 # create a file of matches
 semgrep -l go --pattern 'log.$A(...)' --json > matches.json
 
