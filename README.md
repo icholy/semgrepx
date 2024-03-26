@@ -10,7 +10,7 @@ If you have a Go toolchain installed, you can install the `semgrepx` binary like
 go install github.com/icholy/semgrepx@latest
 ```
 
-They're placed in your `GOBIN` directory, which defaults to ~/go/bin.
+They're placed in your `GOBIN` directory, which defaults to `~/go/bin`.
 Depending on your install method, this may or may not already be in your `PATH`.
 
 
