@@ -67,7 +67,7 @@ func main() {
 			if err == nil {
 				break
 			}
-			if retry < 0 || retries > retry {
+			if retry < 0 || retries <= retry {
 				log.Printf("retrying: %v\n", err)
 				continue
 			}
