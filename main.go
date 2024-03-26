@@ -42,7 +42,7 @@ func main() {
 		}
 	} else {
 		var err error
-		output, err = ReadOutput(os.Stdout)
+		output, err = ReadOutput(os.Stdin)
 		if err != nil {
 			log.Fatalf("failed to read semgrep json: %v", err)
 		}
