@@ -4,14 +4,14 @@
 
 ### Installation:
 
-If you have a Go toolchain installed, you can build the `semgrepx` binary like this:
+If you have a Go toolchain installed, you can install the `semgrepx` binary like this:
 
 ```sh
-git clone https://github.com/icholy/semgrepx
-cd semgrepx
-go build
+go install github.com/icholy/semgrepx@latest
 ```
-You can then run the binary as `./semgrepx`
+
+They're placed in your `GOBIN` directory, which defaults to ~/go/bin.
+Depending on your install method, this may or may not already be in your `PATH`.
 
 
 ### CLI:
