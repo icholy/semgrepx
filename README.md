@@ -47,6 +47,8 @@ semgrep -l go --pattern 'log.$A(...)' --json > matches.json
 semgrepx llm 'update this go to use log.Printf' < matches.json
 ```
 
+* This example uses the [llm](https://llm.datasette.io/en/stable/) tool.
+
 ### Demo:
 
 ![](./semgrepx.gif)
